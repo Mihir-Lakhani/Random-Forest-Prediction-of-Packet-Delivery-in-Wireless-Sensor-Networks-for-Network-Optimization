@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WSN Packet Delivery Prediction Report</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            margin: 1in;
+            color: #333;
+        }
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+        ul, ol {
+            margin-bottom: 12px;
+            padding-left: 25px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 11pt;
+        }
+        .abstract {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        .figure-placeholder {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            background-color: #f9f9f9;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Machine Learning-Based Packet Delivery Prediction in Wireless Sensor Networks: A Random Forest Approach</h1>
+
+<div class="abstract">
+<strong>Abstract:</strong> This report presents a comprehensive study on predicting packet delivery latency categories in Wireless Sensor Networks (WSNs) using a Random Forest machine learning classifier. The project addresses the critical challenge of network performance optimization by accurately predicting latency patterns based on network parameters. Our Random Forest model achieved an overall accuracy of 93% on a test dataset of 200 samples, demonstrating the effectiveness of ensemble learning methods for WSN packet delivery prediction. The study provides insights into feature importance and practical implications for network management.
+</div>
+
+<h2>1. Introduction</h2>
+
+<h3>1.1 Wireless Sensor Networks Overview</h3>
+<p>Wireless Sensor Networks (WSNs) represent a fundamental technology in modern distributed computing systems, consisting of spatially distributed autonomous sensors that monitor physical or environmental conditions. These networks play crucial roles in various applications including environmental monitoring, industrial automation, smart cities, and Internet of Things (IoT) deployments. WSNs are characterized by resource constraints, including limited energy, processing power, and bandwidth, making network optimization paramount for sustained operation.</p>
+
+<h3>1.2 The Challenge of Packet Delivery Prediction</h3>
+<p>One of the most critical challenges in WSN management is predicting and optimizing packet delivery performance. Network latency directly impacts the quality of service (QoS) and overall network efficiency. Unpredictable latency can lead to:</p>
+<ul>
+<li><strong>Data Loss:</strong> Critical sensor readings may become obsolete due to excessive delays</li>
+<li><strong>Energy Inefficiency:</strong> Retransmissions and failed deliveries waste limited battery resources</li>
+<li><strong>Network Congestion:</strong> Poor latency prediction can exacerbate congestion issues</li>
+<li><strong>Application Performance:</strong> Real-time applications require predictable network behavior</li>
+</ul>
+
+<h3>1.3 Project Objective</h3>
+<p>This project aims to develop and evaluate a machine learning-based approach for predicting packet delivery latency categories in WSNs. Specifically, we employ a Random Forest classifier to predict whether packet delivery will fall into Low, Medium, or High latency categories based on various network parameters.</p>
+
+<h2>2. Problem Definition</h2>
+
+<h3>2.1 Formal Problem Statement</h3>
+<p>The core problem addressed in this study is the multi-class classification of packet delivery latency in WSNs. Formally, given a set of network features <strong>X</strong> = {x₁, x₂, ..., xₙ}, we aim to predict the latency category <strong>y</strong> ∈ {Low Latency, Medium Latency, High Latency}.</p>
+
+<h3>2.2 Dataset Description</h3>
+<p>The dataset contains 1,000 samples of WSN packet delivery instances, characterized by the following features:</p>
+
+<h4>Network Topology Features:</h4>
+<ul>
+<li><strong>Node_ID:</strong> Unique identifier for network nodes</li>
+<li><strong>Hop_Count:</strong> Number of intermediate nodes in the transmission path</li>
+</ul>
+
+<h4>Transmission Characteristics:</h4>
+<ul>
+<li><strong>Transmission_Delay:</strong> Time taken for packet transmission (continuous)</li>
+<li><strong>Buffer_Occupancy:</strong> Percentage of buffer utilization (0-100%)</li>
+<li><strong>Channel_Utilization:</strong> Percentage of channel usage (0-100%)</li>
+</ul>
+
+<h4>Network Quality Metrics:</h4>
+<ul>
+<li><strong>Energy_Level:</strong> Remaining energy level of transmitting nodes (0-1)</li>
+<li><strong>Link_Quality:</strong> Quality of wireless links (0-1)</li>
+<li><strong>PDR (Packet Delivery Ratio):</strong> Successful packet delivery rate (0-1)</li>
+</ul>
+
+<h2>3. Methodology</h2>
+
+<h3>3.1 Data Preprocessing Pipeline</h3>
+<p>The data preprocessing phase involved several critical steps:</p>
+
+<h4>Missing Value Handling:</h4>
+<ul>
+<li>Applied <code>dropna()</code> method to remove instances with missing values</li>
+<li>Ensured data completeness for reliable model training</li>
+</ul>
+
+<h4>Categorical Variable Encoding:</h4>
+<p>The following categorical features were transformed using Label Encoding:</p>
+<ul>
+<li>Congestion_Status → {0: Low, 1: Medium, 2: High}</li>
+<li>Traffic_Class → {0: Normal, 1: High-Priority}</li>
+<li>Routing_Algorithm → {0: AODV, 1: DCPO-AdaBoost, 2: DSR, 3: OLSR}</li>
+<li>Latency_Category → {0: Low, 1: Medium, 2: High}</li>
+</ul>
+
+<h3>3.2 Random Forest Algorithm</h3>
+<p>Random Forest is an ensemble learning method that combines multiple decision trees to create a robust classifier. The algorithm operates on two key principles:</p>
+
+<h4>Bootstrap Aggregating (Bagging):</h4>
+<p>Each decision tree is trained on a bootstrap sample of the training data, introducing diversity among trees and reducing overfitting.</p>
+
+<h4>Feature Randomness:</h4>
+<p>At each node split, only a random subset of features is considered, typically √(number of features), further increasing diversity.</p>
+
+<h2>4. Experimental Setup and Evaluation</h2>
+
+<h3>4.1 Software and Tools</h3>
+<p><strong>Programming Language:</strong> Python 3.13</p>
+<p><strong>Core Libraries:</strong></p>
+<ul>
+<li><code>scikit-learn:</code> Machine learning algorithms and evaluation metrics</li>
+<li><code>pandas:</code> Data manipulation and analysis</li>
+<li><code>numpy:</code> Numerical computations</li>
+<li><code>matplotlib:</code> Data visualization and plotting</li>
+<li><code>seaborn:</code> Statistical data visualization</li>
+</ul>
+
+<h3>4.2 Evaluation Metrics</h3>
+<p>The model performance was assessed using multiple classification metrics:</p>
+<ul>
+<li><strong>Accuracy:</strong> Overall correctness across all classes</li>
+<li><strong>Precision:</strong> True positives / (True positives + False positives)</li>
+<li><strong>Recall:</strong> True positives / (True positives + False negatives)</li>
+<li><strong>F1-Score:</strong> Harmonic mean of precision and recall</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>5. Results and Discussion</h2>
+
+<h3>5.1 Model Performance Results</h3>
+<p>The Random Forest classifier demonstrated excellent performance across all evaluation metrics:</p>
+
+<table>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Overall Accuracy</td>
+<td>93.0%</td>
+</tr>
+<tr>
+<td>Macro Average Precision</td>
+<td>93.0%</td>
+</tr>
+<tr>
+<td>Macro Average Recall</td>
+<td>92.0%</td>
+</tr>
+<tr>
+<td>Macro Average F1-Score</td>
+<td>93.0%</td>
+</tr>
+</table>
+
+<h4>Class-Specific Performance:</h4>
+<table>
+<tr>
+<th>Class</th>
+<th>Precision</th>
+<th>Recall</th>
+<th>F1-Score</th>
+<th>Support</th>
+</tr>
+<tr>
+<td>0 (Low Latency)</td>
+<td>96%</td>
+<td>93%</td>
+<td>94%</td>
+<td>72</td>
+</tr>
+<tr>
+<td>1 (Medium Latency)</td>
+<td>94%</td>
+<td>92%</td>
+<td>93%</td>
+<td>50</td>
+</tr>
+<tr>
+<td>2 (High Latency)</td>
+<td>89%</td>
+<td>92%</td>
+<td>91%</td>
+<td>78</td>
+</tr>
+</table>
+
+<div style="text-align: center; margin: 20px 0;">
+<img src="reports/confusion_matrix.png" alt="Confusion Matrix showing prediction accuracy across latency categories. The matrix displays three classes: Low, Medium, and High latency, with most predictions concentrated along the diagonal, indicating high accuracy. The environment is a clean digital heat map with labeled axes for True and Predicted categories. No additional text is present in the image." style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt;"><strong>Figure 1:</strong> Confusion Matrix showing prediction accuracy across latency categories</p>
+</div>
+
+<h3>5.2 Feature Importance Analysis</h3>
+<p>Based on the Random Forest feature importance scores, the most influential network parameters are:</p>
+
+<ol>
+<li><strong>Transmission_Delay</strong> (~65% importance): Dominates prediction</li>
+<li><strong>Buffer_Occupancy</strong> (~8% importance): Network congestion indicator</li>
+<li><strong>Energy_Level</strong> (~6% importance): Resource availability impact</li>
+<li><strong>Link_Quality</strong> (~5% importance): Connection reliability factor</li>
+<li><strong>Channel_Utilization</strong> (~5% importance): Network load indicator</li>
+</ol>
+
+<div style="text-align: center; margin: 20px 0;">
+<img src="reports/feature_importance.png" alt="Feature Importance Bar Chart" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt;"><strong>Figure 2:</strong> Feature importance ranking from Random Forest classifier</p>
+</div>
+
+<h3>5.3 ROC Curve Analysis</h3>
+<p>The ROC curves demonstrate exceptional model discrimination:</p>
+
+<ul>
+<li><strong>Class 0:</strong> AUC = 1.00 (Perfect discrimination)</li>
+<li><strong>Class 1:</strong> AUC = 0.99 (Near-perfect discrimination)</li>
+<li><strong>Class 2:</strong> AUC = 0.98 (Excellent discrimination)</li>
+</ul>
+
+<div style="text-align: center; margin: 20px 0;">
+<img src="reports/roc_curves.png" alt="ROC Curves for Multi-Class Classification" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt;"><strong>Figure 3:</strong> ROC curves demonstrating excellent model discrimination across all classes</p>
+</div>
+
+<h3>5.4 Data Distribution Analysis</h3>
+<p>Analysis of the dataset reveals interesting patterns in feature distributions:</p>
+
+<div style="text-align: center; margin: 20px 0;">
+<img src="reports/boxplot_packet_size_latency.png" alt="Packet Size by Latency Category" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt;"><strong>Figure 4:</strong> Packet size distribution across latency categories shows similar medians but varying spreads</p>
+</div>
+
+<div style="display: flex; justify-content: space-between; margin: 20px 0;">
+<div style="width: 48%;">
+<img src="reports/scatter_energy_pdr.png" alt="Energy Level vs PDR" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt; text-align: center;"><strong>Figure 5:</strong> Energy Level vs PDR relationship</p>
+</div>
+<div style="width: 48%;">
+<img src="reports/scatter_linkquality_pdr.png" alt="Link Quality vs PDR" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+<p style="font-style: italic; margin-top: 10px; font-size: 11pt; text-align: center;"><strong>Figure 6:</strong> Link Quality vs PDR relationship</p>
+</div>
+</div>
+
+<h3>5.5 Practical Implications</h3>
+<p>The high accuracy achieved by the Random Forest model has several practical implications:</p>
+
+<ul>
+<li><strong>Real-Time Network Optimization:</strong> Proactive adjustment of routing strategies</li>
+<li><strong>Resource Allocation:</strong> Focus monitoring efforts on critical parameters</li>
+<li><strong>Adaptive Applications:</strong> Adjust behavior based on predicted conditions</li>
+<li><strong>Network Design Guidance:</strong> Emphasize buffer management and transmission optimization</li>
+</ul>
+
+<h2>6. Conclusion</h2>
+
+<h3>6.1 Summary of Achievements</h3>
+<p>This study successfully developed a Random Forest classifier achieving 93% accuracy for WSN latency prediction. Key achievements include identifying transmission delay as the dominant predictive factor and creating a robust ensemble model suitable for network optimization.</p>
+
+<h3>6.2 Future Work</h3>
+<p>Future research directions include:</p>
+<ul>
+<li>Exploring deep learning approaches for complex feature interactions</li>
+<li>Incorporating temporal patterns and dynamic network conditions</li>
+<li>Expanding datasets for cross-domain validation</li>
+<li>Developing lightweight models for edge deployment</li>
+</ul>
+
+<h2>7. References</h2>
+
+<ol>
+<li>Akyildiz, I. F., et al. (2002). Wireless sensor networks: a survey. <em>Computer Networks</em>, 38(4), 393-422.</li>
+<li>Breiman, L. (2001). Random Forests. <em>Machine Learning</em>, 45(1), 5-32.</li>
+<li>Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research</em>, 12, 2825-2830.</li>
+<li>Yick, J., et al. (2008). Wireless sensor network survey. <em>Computer Networks</em>, 52(12), 2292-2330.</li>
+<li>Hastie, T., et al. (2009). <em>The Elements of Statistical Learning</em>. Springer Science & Business Media.</li>
+</ol>
+
+</body>
+</html>
